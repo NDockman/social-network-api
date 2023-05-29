@@ -1,4 +1,30 @@
-const { Schema, model } = require('mongoose');
+//Types?
+const { Schema, Types, model } = require('mongoose');
+//const mongoose = require("mongoose");
+//const Schema = mongoose.Schema;
+
+const reactionSchema = new Schema(
+  {
+    reactionId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId()
+    },
+    reactionBody: {
+      type: String,
+      required: true,
+      maxlength: 280
+    },
+    username: {
+      type: String,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      //getter method to format the timestamp on query
+    }
+  }
+);
 
 // Schema to create a Thought model
 const thoughtSchema = new Schema(
@@ -6,21 +32,21 @@ const thoughtSchema = new Schema(
     thoughtText: {
       type: String,
       required: true,
-      //must be between 1 and 280 characters
+      min: 1,
+      max: 280
     },
     createdAt: {
       type: Date,
       //set default value to current timestamp
-      default: Date.now(),
+      default: Date.now,
       //use a getter method to format the timestamp on query
     },
     username: {
       type: String,
       required: true,
     },
-    reactions: {
-      //array of nested documents created with the reactionSchema
-    }
+    // Array of nested documents (rows) created with reactionSchema
+    reactions: [reactionSchema]
   },
   // {
   //   toJSON: {
