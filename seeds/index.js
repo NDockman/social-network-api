@@ -5,8 +5,6 @@ const userData = require("./user-seeds");
 
 
 
-
-//how do I insert documents?
 const seedDatabase = async () => {
     await Thought.insertMany(thoughtData);
     await User.insertMany(userData);

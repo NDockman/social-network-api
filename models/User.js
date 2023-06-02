@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 //const Schema = mongoose.Schema;
 
 // Schema to create User model
-const userSchema = new /*mongoose.*/Schema(
+const userSchema = new Schema(
   {
     username: {
       type: String,
@@ -14,9 +14,16 @@ const userSchema = new /*mongoose.*/Schema(
     email: {
       type: String,
       required: true,
-      //unique
       unique: true,
       //must match a valid email address
+      validate: {
+        validator: function (value) {
+          // Return statement executes when the validator succeeds
+          return value !== userSchema.email
+        },
+        // This message is sent when the validator fails
+        message: "That email is already being used. Please pick a different email."
+      }
     },
     thoughts: {
       //array of _id values referencing Thought model
@@ -36,6 +43,6 @@ const userSchema = new /*mongoose.*/Schema(
   // }
 );
 
-const User = /*mongoose.*/model('user', userSchema);
+const User = model('user', userSchema);
 
 module.exports = User;

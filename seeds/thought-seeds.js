@@ -1,16 +1,17 @@
 
+// Seed data for thoughts
 const thoughtData = [
     {
         thoughtText: "fkdlsankcdsanlafdsa",
         createdAt: Date.now(),
         username: "appledog",
-        reactions
+        // reactions: []
     },
     {
         thoughtText: "oafdnsajfndafdjksafdsa",
         createdAt: Date.now(),
         username: "expertgiraffe",
-        reactions
+        reactions: []
     }
 ];
 
