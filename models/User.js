@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 //const mongoose = require("mongoose");
 //const Schema = mongoose.Schema;
 
@@ -8,41 +8,46 @@ const userSchema = new Schema(
     username: {
       type: String,
       required: true,
-      //trimmed
-      $trim: { input: "" }
+      // $trim: { input: "" }
+      trim: true
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      //must match a valid email address
+      // Must match a valid email address
       validate: {
         validator: function (value) {
           // Return statement executes when the validator succeeds
-          return value !== userSchema.email
+          return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)
         },
         // This message is sent when the validator fails
-        message: "That email is already being used. Please pick a different email."
+        message: "That email is invalid."
       }
     },
-    thoughts: {
-      //array of _id values referencing Thought model
+    // Array of _id values referencing Thought model
+    thoughts: [{
       type: Schema.Types.ObjectId,
-      ref: ["Thought"]
-    },
-    friends: {
-      //array of _id values referencing User model
+      ref: "thought"
+    }],
+    // Array of _id values referencing User model
+    friends: [{
       type: Schema.Types.ObjectId,
-      ref: ["User"]
-    }
+      ref: "user"
+    }]
   },
-  // {
-  //   toJSON: {
-  //     getters: true
-  //   }
-  // }
+  {
+    toJSON: {
+      virtuals: true
+    }
+  }
 );
 
-const User = model('user', userSchema);
+userSchema.virtual("friendCount").get(function() {
+  return this.friends.length;
+})
+
+
+const User = model("user", userSchema);
 
 module.exports = User;

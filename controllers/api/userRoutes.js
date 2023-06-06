@@ -39,6 +39,7 @@ router.post('/', async (req, res) => {
     const userData = await User.create(req.body);
     res.status(200).json(userData);
   } catch (err) {
+    console.log(err)
     res.status(400).json(err);
   }
 });
@@ -73,16 +74,17 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-//add a new friend to a user's friend list
+// Add a friend
 router.post("/:userId/friends/:friendId", async (req, res) => {
   try {
     const userData = await User.findById(req.params.userId);
-    // console.log(userData)
     // console.log(userData.friends)
-    const friendData = await User.findById(req.params.friendId);
+    // console.log(userData.friendCount)
 
-    userData.friends = friendData.username;
-    friendData.friends = userData.username;
+    // const friendData = await User.findById(req.params.friendId);
+
+    userData.friends.push(req.params.friendId);
+    userData.save();
 
     res.status(200).json(userData.friends);
   } catch (err) {
@@ -90,12 +92,14 @@ router.post("/:userId/friends/:friendId", async (req, res) => {
   }
 });
 
-  //remove a friend from a user's friend list
+  // Remove a friend
 router.delete("/:userId/friends/:friendId", async (req, res) => {
-
   try {
     const userData = await User.findById(req.params.userId);
     
+    const deletedFriend = userData.friends.indexOf(req.params.friendId);
+    userData.friends.splice(deletedFriend, 1);
+
     res.status(200).json(userData.friends);
   } catch {
     res.status(400).json(err)

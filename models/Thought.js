@@ -1,5 +1,5 @@
-//Types?
-const { Schema, Types, model } = require('mongoose');
+const dayjs = require("dayjs");
+const { Schema, Types, model } = require("mongoose");
 //const mongoose = require("mongoose");
 //const Schema = mongoose.Schema;
 
@@ -21,7 +21,10 @@ const reactionSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      //getter method to format the timestamp on query
+      // Getter method to format the timestamp on query
+      get: (timestamp) => {
+        return dayjs(timestamp).format("DD/MM/YYYY")
+      }
     }
   }
 );
@@ -37,9 +40,11 @@ const thoughtSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      //set default value to current timestamp
       default: Date.now,
-      //use a getter method to format the timestamp on query
+      // Getter method to format the timestamp on query
+      get: (timestamp) => {
+        return dayjs(timestamp).format("DD/MM/YYYY")
+      }
     },
     username: {
       type: String,
@@ -48,14 +53,19 @@ const thoughtSchema = new Schema(
     // Array of nested documents (rows) created with reactionSchema
     reactions: [reactionSchema]
   },
-  // {
-  //   toJSON: {
-  //     virtuals: true,
-  //   },
-  //   id: false
-  // }
+  {
+    toJSON: {
+      virtuals: true,
+      getters: true,
+    },
+    id: false
+  }
 );
 
-const Thought = model('thought', thoughtSchema);
+thoughtSchema.virtual("reactionCount").get(() => {
+  return this.reactions.length;
+});
+
+const Thought = model("thought", thoughtSchema);
 
 module.exports = Thought;
